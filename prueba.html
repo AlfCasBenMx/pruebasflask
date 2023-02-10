@@ -1,41 +1,40 @@
-<!DOCTYPE html>
 <html>
   <head>
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <title>Welcome Page</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+    <style>
+      #description {
+        display: none;
+        padding: 10px;
+        background-color: lightgray;
+      }
+    </style>
   </head>
   <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <a class="navbar-brand" href="#">My App</a>
-    </nav>
-    <div class="container">
-      <h1>Welcome user, the hour is {{ hour }}</h1>
-      <img src="{{ random_image }}" alt="Random Image">
-      <table class="table table-striped" id="data-table">
-        <thead>
-          <tr>
-            {% for column in df.columns %}
-              <th>{{ column }}</th>
-            {% endfor %}
-          </tr>
-        </thead>
-        <tbody>
-          {% for row in df.to_dict(orient='records') %}
-            <tr>
-              {% for value in row.values() %}
-                <td>{{ value }}</td>
-              {% endfor %}
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-    <script>
-      $(document).ready(function() {
-        $('#data-table').DataTable();
-      });
-    </script>
+    <h1>Welcome!</h1>
+    <p>Please select one of the following dashboards to enter:</p>
+    <ul>
+      <li><a href="#dashboard1" id="option1">Dashboard 1</a></li>
+      <li><a href="#dashboard2" id="option2">Dashboard 2</a></li>
+      <li><a href="#dashboard3" id="option3">Dashboard 3</a></li>
+    </ul>
+    <div id="description"></div>
   </body>
+  <script>
+    $("#option1").hover(function() {
+      $("#description").text("Description of Dashboard 1").show();
+    }, function() {
+      $("#description").hide();
+    });
+    $("#option2").hover(function() {
+      $("#description").text("Description of Dashboard 2").show();
+    }, function() {
+      $("#description").hide();
+    });
+    $("#option3").hover(function() {
+      $("#description").text("Description of Dashboard 3").show();
+    }, function() {
+      $("#description").hide();
+    });
+  </script>
 </html>
