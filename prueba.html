@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="#">My App</a>
+    </nav>
+    <div class="container">
+      <h1>Welcome user, the hour is {{ hour }}</h1>
+      <img src="{{ random_image }}" alt="Random Image">
+      <table class="table table-striped" id="data-table">
+        <thead>
+          <tr>
+            {% for column in df.columns %}
+              <th>{{ column }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in df.to_dict(orient='records') %}
+            <tr>
+              {% for value in row.values() %}
+                <td>{{ value }}</td>
+              {% endfor %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <script>
+      $(document).ready(function() {
+        $('#data-table').DataTable();
+      });
+    </script>
+  </body>
+</html>
