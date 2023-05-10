@@ -1,8 +1,7 @@
-
 data files;
    length file_name $100;
    set carpetas;
-   infile dummy pipe "ls " || trim(nombre);
-   file_name = _infile_;
-   input;
+   dir = trim(nombre);
+   infile dummy pipe ("ls " || dir);
+   input file_name $char100.;
 run;
