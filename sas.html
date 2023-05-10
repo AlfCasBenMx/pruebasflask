@@ -1,4 +1,25 @@
-data _null_;
-    set carpetas;
-    call execute(cat('data work.files; set work.files; infile dummy pipe "ls -p ', trim(nombre), ' | grep -v /"; input file_name $char100.; run;'));
+/* Create a fileref that executes a shell command when read from */
+filename out pipe "ls -d /ruta/a/datos/*/";
+
+/* Create a dataset named 'carpetas' with the directory names */
+data carpetas;
+   infile out truncover;
+   input nombre $char100.;
+   if substr(nombre, length(nombre)) = '/' then nombre = substr(nombre, 1, length(nombre)-1);
 run;
+
+/* Clear the 'out' fileref */
+filename out clear;
+
+/* Create a dataset named 'files' to store the file names */
+data files(keep=nombre file_name);
+   length file_name $100;
+   set carpetas;
+   nombre = trim(nombre);
+   infile dummy pipe ("ls " || nombre) end=done;
+   do while(not done);
+      input file_name $char100.;
+      output;
+   end;
+run;
+
