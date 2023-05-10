@@ -55,3 +55,12 @@ data _null_;
     input;
     put _infile_;
 run;
+
+
+
+filename diskinfo pipe "df -h .";
+data _null_;
+    infile diskinfo;
+    input;
+    put _infile_;
+run;
