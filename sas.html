@@ -1,14 +1,14 @@
-/* Abre la librería */
-libname &libname.;
+/* Especifica el nombre de la librería */
+%let libname = mi_libreria;
 
-/* Define la ruta de la librería */
-%let libpath = %sysfunc(pathname(&libname.));
+/* Especifica la ruta de la librería */
+%let libpath = /SASD/INSU/RAW;
 
 /* Define la macro variable para almacenar los nombres de carpeta */
 %let folderlist = ;
 
 /* Abre el directorio de la librería */
-%let did = %sysfunc(diropen(&libpath.));
+%let did = %sysfunc(diropen("&libpath./&libname."));
 
 /* Lee los nombres de carpeta dentro de la librería */
 %do %while(%sysfunc(diread(&did)) = 0);
