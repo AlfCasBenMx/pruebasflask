@@ -1,7 +1,14 @@
-filename out pipe "ls -d /ruta/a/datos/*/";
-data carpetas;
-   infile out truncover;
-   input nombre $char100.;
-   if substr(nombre, length(nombre)) = '/' then nombre = substr(nombre, 1, length(nombre)-1);
+data archivos;
+   set carpetas;
+   ruta = cats('/ruta/a/datos/', nombre);
+   filename carpeta "&ruta";
+   x = dir(carpeta);
+   do i = 1 to countw(x);
+      if upcase(scan(x, i)) ne '.' and upcase(scan(x, i)) ne '..'
+      and ftype(scan(x, i)) ne 'DIRECTORY' then do;
+         archivo = scan(x, i);
+         output;
+      end;
+   end;
 run;
-filename out clear;
+
