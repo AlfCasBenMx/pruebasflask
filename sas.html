@@ -1,26 +1,24 @@
-/* Create a fileref that executes a shell command when read from */
-filename out pipe "ls -d /ruta/a/datos/*/";
-
-/* Create a dataset named 'carpetas' with the directory names */
-data carpetas;
-   infile out truncover;
-   input nombre $char100.;
-   if substr(nombre, length(nombre)) = '/' then nombre = substr(nombre, 1, length(nombre)-1);
-run;
-
-/* Clear the 'out' fileref */
-filename out clear;
-
-/* Create a dataset to store the commands for listing files in each directory */
+/* Create a dataset to store the commands for reading files */
 data commands;
-    set carpetas;
-    length command $200;
-    command = catt('filename indata pipe "ls "', trim(nombre), '"; data _temp; retain nombre "', trim(nombre), '"; infile indata; input file_name $char100.; output; run;');
+    set files;
+    length command $300;
+
+    if index(file_name, 'Type1') then do;
+        command = catx(' ', 'data work.data1; set work.data1; infile "', file_path, '" truncover; input var1 var2 var3; run;');
+    end;
+    else if index(file_name, 'Type2') then do;
+        command = catx(' ', 'data work.data2; set work.data2; infile "', file_path, '" truncover; input varA $ varB; run;');
+    end;
 run;
 
-/* Initialize the 'files' dataset */
-data files;
-    length nombre $100 file_name $100;
+/* Initialize the datasets */
+data work.data1 (drop=var1 var2 var3);
+    length var1 var2 var3 8;
+    stop;
+run;
+
+data work.data2 (drop=varA varB);
+    length varA $20 varB 8;
     stop;
 run;
 
@@ -28,6 +26,4 @@ run;
 data _null_;
     set commands;
     call execute(command);
-    call execute('proc append base=files data=_temp; run;');
-    call execute('proc datasets library=work nolist; delete _temp; quit;');
 run;
