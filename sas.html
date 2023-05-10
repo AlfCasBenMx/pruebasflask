@@ -11,12 +11,23 @@ run;
 /* Clear the 'out' fileref */
 filename out clear;
 
-/* Create a dataset to store the file names */
+/* Create a dataset to store the commands for listing files in each directory */
+data commands;
+    set carpetas;
+    length command $200;
+    command = catt('filename indata pipe "ls "', trim(nombre), '"; data _temp; retain nombre "', trim(nombre), '"; infile indata; input file_name $char100.; output; run;');
+run;
+
+/* Initialize the 'files' dataset */
 data files;
-   length nombre $100 file_name $100;
-   retain nombre;
-   set carpetas end=eof;
-   call execute('filename indata pipe "ls '||trim(nombre)||'";');
-   call execute('data _temp; infile indata; input file_name $char100.; nombre="'||trim(nombre)||'"; output; run;');
-   if eof then call execute('proc append base=files data=_temp; run; proc datasets library=work; delete _temp; quit;');
+    length nombre $100 file_name $100;
+    stop;
+run;
+
+/* Execute the commands */
+data _null_;
+    set commands;
+    call execute(command);
+    call execute('proc append base=files data=_temp; run;');
+    call execute('proc datasets library=work nolist; delete _temp; quit;');
 run;
