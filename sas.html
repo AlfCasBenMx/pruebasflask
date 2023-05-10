@@ -1,14 +1,13 @@
 data archivos;
    set carpetas;
-   ruta = cats('/ruta/a/datos/', nombre);
-   filename carpeta "&ruta";
-   x = dir(carpeta);
-   do i = 1 to countw(x);
-      if upcase(scan(x, i)) ne '.' and upcase(scan(x, i)) ne '..'
-      and ftype(scan(x, i)) ne 'DIRECTORY' then do;
-         archivo = scan(x, i);
+   carpeta_completa = catx('/', '/ruta/a/datos', nombre);
+   filename carpeta carpeta_completa;
+   archivos = dir(carpeta);
+   do i=1 to countw(archivos);
+      if upcase(scan(archivos,i)) ne '.' and upcase(scan(archivos,i)) ne '..'
+      and ftype(scan(archivos,i)) ne 'DIRECTORY' then
          output;
-      end;
    end;
 run;
+
 
