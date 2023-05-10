@@ -11,14 +11,12 @@ run;
 /* Clear the 'out' fileref */
 filename out clear;
 
-/* Create a dataset named 'files' to store the file names */
-data files(keep=nombre file_name);
-   length file_name $100;
-   set carpetas;
-   nombre = trim(nombre);
-   infile dummy pipe ("ls " || nombre) end=done;
-   do while(not done);
-      input file_name $char100.;
-      output;
-   end;
+/* Create a dataset to store the file names */
+data files;
+   length nombre $100 file_name $100;
+   retain nombre;
+   set carpetas end=eof;
+   call execute('filename indata pipe "ls '||trim(nombre)||'";');
+   call execute('data _temp; infile indata; input file_name $char100.; nombre="'||trim(nombre)||'"; output; run;');
+   if eof then call execute('proc append base=files data=_temp; run; proc datasets library=work; delete _temp; quit;');
 run;
