@@ -1,25 +1,9 @@
-/* Especifica el nombre de la librería */
-%let libname = mi_libreria;
-
-/* Especifica la ruta de la librería */
-%let libpath = /SASD/INSU/RAW;
-
-/* Define la macro variable para almacenar los nombres de carpeta */
-%let folderlist = ;
-
-/* Abre el directorio de la librería */
-%let did = %sysfunc(diropen("&libpath./&libname."));
-
-/* Lee los nombres de carpeta dentro de la librería */
-%do %while(%sysfunc(diread(&did)) = 0);
-  %let fname = %qsysfunc(dirname(&did));
-  %if %sysfunc(directory(&did, %str(%bquote(&fname)), d)) %then %do;
-    %let folderlist = &folderlist. &fname.;
-  %end;
-%end;
-
-/* Cierra el directorio de la librería */
-%let rc = %sysfunc(dirclose(&did));
-
-/* Muestra la lista de nombres de carpeta */
-%put Carpetas en la librería &libname.: &folderlist.;
+filename carpeta '/ruta/a/datos/';
+data _null_;
+   x=dir(carpeta);
+   do i=1 to countw(x);
+      if upcase(scan(x,i)) ne '.' and upcase(scan(x,i)) ne '..'
+      and ftype(scan(x,i)) eq 'DIRECTORY' then
+         put scan(x,i);
+   end;
+run;
