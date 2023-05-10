@@ -1,7 +1,18 @@
-data files;
-   length file_name $100;
-   set carpetas;
-   dir = trim(nombre);
-   infile dummy pipe ("ls " || dir);
-   input file_name $char100.;
+%macro list_files_in_dirs;
+
+data _null_;
+    set carpetas;
+    call symputx('current_dir', trim(nombre));
 run;
+
+%do i = 1 %to &sqlobs;
+
+    %let current_dir = &&dir&i;
+
+    data files_in_dir;
+        length file_name $100;
+        infile dummy pipe ("ls " || "&current_dir");
+        input file_name $char100.;
+    run;
+
+    proc append base=files
