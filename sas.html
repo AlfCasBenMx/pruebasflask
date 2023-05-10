@@ -1,13 +1,8 @@
-data archivos;
+
+data files;
+   length file_name $100;
    set carpetas;
-   carpeta_completa = catx('/', '/ruta/a/datos', nombre);
-   filename carpeta carpeta_completa;
-   archivos = dir(carpeta);
-   do i=1 to countw(archivos);
-      if upcase(scan(archivos,i)) ne '.' and upcase(scan(archivos,i)) ne '..'
-      and ftype(scan(archivos,i)) ne 'DIRECTORY' then
-         output;
-   end;
+   infile dummy pipe "ls " || trim(nombre);
+   file_name = _infile_;
+   input;
 run;
-
-
