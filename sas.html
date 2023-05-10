@@ -47,3 +47,11 @@ data _null_;
     set commands;
     call execute(command);
 run;
+
+
+filename dirlist pipe "du -sh /path/to/directory";
+data _null_;
+    infile dirlist;
+    input;
+    put _infile_;
+run;
