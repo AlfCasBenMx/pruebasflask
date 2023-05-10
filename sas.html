@@ -1,15 +1,22 @@
-/* Create a dataset to store the commands for reading files */
-data commands;
-    set files;
-    length command $300;
+/* Define a macro for reading 'Type1' files */
+%macro read_type1(file_path);
+    data work.data1;
+        set work.data1;
+        infile "&file_path" truncover;
+        /* Your 'Type1' INPUT statement goes here */
+        input var1 var2 var3;
+    run;
+%mend read_type1;
 
-    if index(file_name, 'Type1') then do;
-        command = catx(' ', 'data work.data1; set work.data1; infile "', file_path, '" truncover; input var1 var2 var3; run;');
-    end;
-    else if index(file_name, 'Type2') then do;
-        command = catx(' ', 'data work.data2; set work.data2; infile "', file_path, '" truncover; input varA $ varB; run;');
-    end;
-run;
+/* Define a macro for reading 'Type2' files */
+%macro read_type2(file_path);
+    data work.data2;
+        set work.data2;
+        infile "&file_path" truncover;
+        /* Your 'Type2' INPUT statement goes here */
+        input varA $ varB;
+    run;
+%mend read_type2;
 
 /* Initialize the datasets */
 data work.data1 (drop=var1 var2 var3);
@@ -20,6 +27,19 @@ run;
 data work.data2 (drop=varA varB);
     length varA $20 varB 8;
     stop;
+run;
+
+/* Create a dataset to store the commands for reading files */
+data commands;
+    set files;
+    length command $300;
+
+    if index(file_name, 'Type1') then do;
+        command = cat('%read_type1(', file_path, ');');
+    end;
+    else if index(file_name, 'Type2') then do;
+        command = cat('%read_type2(', file_path, ');');
+    end;
 run;
 
 /* Execute the commands */
