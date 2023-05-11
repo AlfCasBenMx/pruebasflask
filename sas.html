@@ -84,3 +84,31 @@ run;
 /* Clear the fileref */
 filename dirlist;
 
+
+
+
+/* Create a dataset to store the variable lengths */
+data variable_lengths;
+    length varname $32 length 8;
+    retain varname length;
+    
+    /* Open the dataset */
+    dsid = open('work.your_dataset');
+
+    /* Loop over the variables in the dataset */
+    do i = 1 to attrn(dsid, 'NVARS');
+        /* Get the variable name and length */
+        varname = varname(dsid, i);
+        length = attrn(dsid, 'LENGTH', varname);
+        output;
+    end;
+
+    /* Close the dataset */
+    rc = close(dsid);
+run;
+
+/* Print the variable lengths */
+proc print data=variable_lengths noobs;
+    var varname length;
+run;
+
