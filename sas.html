@@ -64,3 +64,23 @@ data _null_;
     input;
     put _infile_;
 run;
+
+
+
+/* Define the command and assign it to a fileref */
+filename dirlist pipe "ls /your/directory/path";
+
+/* Create a dataset from the command output */
+data dirlist;
+    length filename $256;  /* Adjust the length as needed */
+    infile dirlist truncover;
+    input filename $char256.;  /* Adjust the informat as needed */
+run;
+
+/* Print the dataset */
+proc print data=dirlist noobs;
+run;
+
+/* Clear the fileref */
+filename dirlist;
+
